@@ -16,11 +16,11 @@ class SplashScreen extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                /// شعار التطبيق
+                /// هون الشعار 
                 Padding(
                   padding: const EdgeInsets.all(20.0),
                   child: Image.asset(
-                    "assets/images/photo_2025-04-16_14-38-02-removebg-preview.png", // عدل المسار حسب مشروعك
+                    "assets/images/14c26c09-c455-4327-87db-e93d0b497601.png", // عدل المسار حسب مشروعك
                     width: 180,
                     height: 180,
                     fit: BoxFit.contain,

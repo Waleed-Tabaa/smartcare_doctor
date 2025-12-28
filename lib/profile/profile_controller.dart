@@ -1,30 +1,26 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:http/http.dart' as http;
 import 'package:get_storage/get_storage.dart';
-import 'package:smartcare/profile/profile_model.dart';
+import 'profile_model.dart';
 
 class ProfileController extends GetxController {
   final box = GetStorage();
   final String baseUrl = "https://final-production-8fa9.up.railway.app";
+
   bool isLoading = false;
 
-  String name = '';
-  String email = '';
-  String experience = '';
-  String about = '';
-  String specialty = '';
-  String clinicName = '';
-  String clinicAddress = '';
-  String phone = '';
-  String imagePath = '';
-  String avatarUrl = '';
+  String name = "";
+  String about = "";
+  String avatarUrl = "";
+  String imagePath = "";
 
-  bool hidePassword = true;
+  List<String> workingDays = [];
+  String startTime = "";
+  String endTime = "";
 
   DoctorProfile profileModel = DoctorProfile();
 
@@ -36,111 +32,54 @@ class ProfileController extends GetxController {
 
   Future<void> fetchProfile() async {
     try {
-      BotToast.showLoading();
       isLoading = true;
       update();
 
       final rawToken = box.read("token");
       if (rawToken == null) return;
 
-      String token = rawToken.toString();
-      log(token.toString(), name: "fetchProfile token");
-      // if (token.startsWith("Bearer ")) {
-      //   token = token.substring(7);
-      // }
-
       final response = await http.get(
         Uri.parse("$baseUrl/api/doctor/profile/details"),
         headers: {
-          "Authorization": "Bearer $token",
+          "Authorization": "Bearer $rawToken",
           "Accept": "application/json",
         },
       );
 
-      BotToast.closeAllLoading();
-      log(response.statusCode.toString(), name: "fetchProfile statusCode");
-      log(response.body.toString(), name: "fetchProfile body");
+      log(response.body, name: "fetchProfile");
 
       if (response.statusCode != 200) return;
 
       final data = jsonDecode(response.body);
       profileModel = DoctorProfile.fromJson(data["profile"]);
 
-      name = profileModel!.fullName!;
-      about = profileModel!.bio;
-      avatarUrl = profileModel!.avatarUrl;
-      specialty = profileModel!.specialty!.name;
-      clinicName = profileModel!.clinic!.name;
-      clinicAddress = profileModel!.clinic!.address;
-      phone = profileModel!.clinic!.phone;
+      name = profileModel.fullName ?? "";
+      about = profileModel.bio ?? "";
+      avatarUrl = profileModel.avatarUrl ?? "";
 
-      box.write("doctorName", name);
+      workingDays = (profileModel.workingDays ?? "")
+          .toString()
+          .split(",")
+          .map((e) => e.trim())
+          .where((e) => e.isNotEmpty)
+          .toList();
+
+      startTime = (profileModel.startTime ?? "").toString();
+      endTime   = (profileModel.endTime ?? "").toString();
+
       update();
-    } catch (e) {
     } finally {
-      BotToast.closeAllLoading();
       isLoading = false;
       update();
     }
   }
 
-  // ================= UPDATE PROFILE API =================
-  // Future<bool> updateProfileApi({
-  //   required String fullName,
-  //   required String bio,
-  // }) async {
-  //   try {
-  //     BotToast.showLoading();
-
-  //     final rawToken = box.read("token");
-  //     if (rawToken == null) return false;
-
-  //     String token = rawToken.toString();
-  //     if (token.startsWith("Bearer ")) {
-  //       token = token.substring(7);
-  //     }
-
-  //     final response = await http.post(
-  //       Uri.parse("$baseUrl/api/doctor/profile/update"),
-  //       headers: {
-  //         "Authorization": "Bearer $token",
-  //         "Accept": "application/json",
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: jsonEncode({
-  //         "full_name": fullName,
-  //         "primary_specialty_id": profileModel!.primarySpecialtyId,
-  //         "clinic_id": profileModel!.clinicId,
-  //         "bio": bio,
-  //         "avatar_url": avatarUrl,
-  //       }),
-  //     );
-
-  //     BotToast.closeAllLoading();
-
-  //     if (response.statusCode == 200) {
-  //       final data = jsonDecode(response.body);
-  //       profileModel = DoctorProfile.fromJson(data["profile"]);
-
-  //       name = profileModel!.fullName;
-  //       about = profileModel!.bio;
-  //       avatarUrl = profileModel!.avatarUrl;
-
-  //       box.write("doctorName", name);
-  //       update();
-  //       return true;
-  //     }
-
-  //     return false;
-  //   } catch (e) {
-  //     BotToast.closeAllLoading();
-  //     return false;
-  //   }
-  // }
-
   Future<bool> updateProfileApi({
     required String fullName,
     required String bio,
+    required List<String> days,
+    required String start,
+    required String end,
   }) async {
     try {
       BotToast.showLoading();
@@ -148,67 +87,40 @@ class ProfileController extends GetxController {
       final rawToken = box.read("token");
       if (rawToken == null) return false;
 
-      String token = rawToken.toString();
-      // if (token.startsWith("Bearer ")) {
-      //   token = token.substring(7);
-      // }
-
-      final url = Uri.parse("$baseUrl/api/doctor/profile/update");
-
       final body = {
         "full_name": fullName,
-        "gender": profileModel!.gender,
-        "primary_specialty_id": profileModel!.primarySpecialtyId,
-        "clinic_id": profileModel!.clinicId,
-        "license_no": profileModel!.licenseNo,
+        "gender": profileModel.gender ?? "male",
+        "primary_specialty_id": profileModel.primarySpecialtyId,
+        "clinic_id": profileModel.clinicId,
+        "license_no": profileModel.licenseNo,
         "bio": bio,
         "avatar_url": avatarUrl,
+        "working_days": days.join(", "),
+        "start_time": start,
+        "end_time": end,
       };
 
-      final response = await http.post(
-        url,
+      final res = await http.post(
+        Uri.parse("$baseUrl/api/doctor/profile/update"),
         headers: {
-          "Authorization": "Bearer $token",
+          "Authorization": "Bearer $rawToken",
           "Accept": "application/json",
           "Content-Type": "application/json",
         },
         body: jsonEncode(body),
       );
 
-      log(response.statusCode.toString(), name: "updateProfileApi statusCode");
-      log(response.body.toString(), name: "updateProfileApi body");
+      log(res.body, name: "updateProfileApi");
 
       BotToast.closeAllLoading();
 
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        final updated = data["profile"];
-
-        profileModel = DoctorProfile(
-          userId: updated["user_id"],
-          fullName: updated["full_name"],
-          gender: updated["gender"],
-          primarySpecialtyId: updated["primary_specialty_id"],
-          clinicId: updated["clinic_id"],
-          licenseNo: updated["license_no"],
-          bio: updated["bio"],
-          avatarUrl: updated["avatar_url"] ?? avatarUrl,
-          createdAt: profileModel!.createdAt,
-          updatedAt: updated["updated_at"],
-          clinic: profileModel!.clinic,
-          specialty: profileModel!.specialty,
-        );
-
-        name = profileModel!.fullName!;
-        about = profileModel!.bio;
-        avatarUrl = profileModel!.avatarUrl;
-
-        update();
+      if (res.statusCode == 200) {
+        await fetchProfile();   // ← مهم لعرض التحديث فورًا
         return true;
       }
 
       return false;
-    } catch (e) {
+    } catch (_) {
       BotToast.closeAllLoading();
       return false;
     }
@@ -218,17 +130,12 @@ class ProfileController extends GetxController {
     final rawToken = box.read("token");
     if (rawToken == null) return;
 
-    String token = rawToken.toString();
-    if (token.startsWith("Bearer ")) {
-      token = token.substring(7);
-    }
-
     final request = http.MultipartRequest(
       "POST",
       Uri.parse("$baseUrl/api/doctor/upload-avatar"),
     );
 
-    request.headers["Authorization"] = "Bearer $token";
+    request.headers["Authorization"] = "Bearer $rawToken";
     request.files.add(await http.MultipartFile.fromPath("avatar", file.path));
 
     final response = await request.send();
@@ -237,7 +144,11 @@ class ProfileController extends GetxController {
     if (resp.statusCode == 200) {
       final data = jsonDecode(resp.body);
       avatarUrl = data["avatar_url"];
-      update();
+
+      imagePath = "";     // ← نوقف FileImage
+      await fetchProfile(); // ← يحدّث الشاشتين
     }
+
+    update();
   }
 }

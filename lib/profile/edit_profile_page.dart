@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:bot_toast/bot_toast.dart';
-import 'package:smartcare/profile/profile_controller.dart';
+import 'profile_controller.dart';
 
 class EditProfileView extends StatefulWidget {
   const EditProfileView({super.key});
@@ -13,170 +13,184 @@ class EditProfileView extends StatefulWidget {
 }
 
 class _EditProfileViewState extends State<EditProfileView> {
-  final ProfileController controller = Get.find<ProfileController>();
-  final _formKey = GlobalKey<FormState>();
+  final ProfileController c = Get.find();
+  final form = GlobalKey<FormState>();
 
   late TextEditingController nameCtrl;
-  late TextEditingController aboutCtrl;
-  late TextEditingController phoneCtrl;
-  late TextEditingController clinicNameCtrl;
-  late TextEditingController clinicAddressCtrl;
+  late TextEditingController bioCtrl;
+  late TextEditingController startCtrl;
+  late TextEditingController endCtrl;
+
+  final days = [
+    "Saturday","Sunday","Monday","Tuesday","Wednesday","Thursday","Friday"
+  ];
+
+  List<String> selectedDays = [];
 
   @override
   void initState() {
     super.initState();
 
-    nameCtrl = TextEditingController(text: controller.name);
-    aboutCtrl = TextEditingController(text: controller.about);
-    phoneCtrl = TextEditingController(text: controller.phone);
-    clinicNameCtrl = TextEditingController(text: controller.clinicName);
-    clinicAddressCtrl = TextEditingController(text: controller.clinicAddress);
-  }
+    nameCtrl = TextEditingController(text: c.name);
+    bioCtrl = TextEditingController(text: c.about);
 
-  @override
-  void dispose() {
-    nameCtrl.dispose();
-    aboutCtrl.dispose();
-    phoneCtrl.dispose();
-    clinicNameCtrl.dispose();
-    clinicAddressCtrl.dispose();
-    super.dispose();
-  }
-
-  Future<void> _pickImage() async {
-    final picked =
-        await ImagePicker().pickImage(source: ImageSource.gallery, imageQuality: 80);
-
-    if (picked != null) {
-      await controller.uploadAvatar(File(picked.path));
-    }
-  }
-
-  Future<void> _save() async {
-    if (!_formKey.currentState!.validate()) {
-      BotToast.showText(text: "يرجى تصحيح الحقول");
-      return;
-    }
-
-    final success = await controller.updateProfileApi(
-      fullName: nameCtrl.text.trim(),
-      bio: aboutCtrl.text.trim(),
+    startCtrl = TextEditingController(
+      text: c.startTime.contains(":") ? c.startTime.substring(0,5) : c.startTime,
     );
 
-    if (success) {
-      controller.phone = phoneCtrl.text.trim();
-      controller.clinicName = clinicNameCtrl.text.trim();
-      controller.clinicAddress = clinicAddressCtrl.text.trim();
-      controller.update();
+    endCtrl = TextEditingController(
+      text: c.endTime.contains(":") ? c.endTime.substring(0,5) : c.endTime,
+    );
 
-      BotToast.showText(text: "تم حفظ التعديلات بنجاح");
-      Get.back();
-    } else {
-      BotToast.showText(text: "فشل حفظ التعديلات");
+    selectedDays = List.from(c.workingDays);
+  }
+
+  Future pickTime(TextEditingController ctrl) async {
+    final t = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.now(),
+    );
+
+    if (t != null) {
+      ctrl.text =
+          "${t.hour.toString().padLeft(2,'0')}:${t.minute.toString().padLeft(2,'0')}";
     }
+  }
+
+  Future pickImage() async {
+    final img =
+        await ImagePicker().pickImage(source: ImageSource.gallery, imageQuality: 80);
+    if (img != null) {
+      await c.uploadAvatar(File(img.path));
+    }
+  }
+
+  Future save() async {
+    if (!form.currentState!.validate()) return;
+
+    final ok = await c.updateProfileApi(
+      fullName: nameCtrl.text.trim(),
+      bio: bioCtrl.text.trim(),
+      days: selectedDays,
+      start: startCtrl.text.trim(),
+      end: endCtrl.text.trim(),
+    );
+
+    BotToast.showText(text: ok ? "تم التحديث" : "فشل الحفظ");
+    if (ok) Get.back();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Directionality(
-      textDirection: TextDirection.rtl,
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text("تعديل الملف الشخصي"),
-          backgroundColor: const Color(0xFF2B7BE4),
-        ),
-        body: GetBuilder<ProfileController>(
-          builder: (c) {
-            final ImageProvider? image = _buildImage(c);
+    const mainBlue = Color(0xFF2B7BE4);
 
-            return SingleChildScrollView(
-              padding: const EdgeInsets.all(16),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  children: [
-                    GestureDetector(
-                      onTap: _pickImage,
-                      child: CircleAvatar(
-                        radius: 55,
-                        backgroundColor: Colors.grey.shade300,
-                        backgroundImage: image,
-                        child: image == null
-                            ? const Icon(Icons.camera_alt, size: 32)
-                            : null,
-                      ),
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("تعديل الملف الشخصي"),
+        backgroundColor: mainBlue,
+      ),
+      body: GetBuilder<ProfileController>(
+        builder: (c) {
+          ImageProvider? img;
+          if (c.imagePath.isNotEmpty) img = FileImage(File(c.imagePath));
+          else if (c.avatarUrl.isNotEmpty) img = NetworkImage(c.avatarUrl);
+
+          return SingleChildScrollView(
+            padding: const EdgeInsets.all(16),
+            child: Form(
+              key: form,
+              child: Column(
+                children: [
+                  GestureDetector(
+                    onTap: pickImage,
+                    child: CircleAvatar(
+                      radius: 55,
+                      backgroundColor: Colors.grey.shade300,
+                      backgroundImage: img,
+                      child: img == null
+                          ? const Icon(Icons.camera_alt, size: 34)
+                          : null,
                     ),
+                  ),
 
-                    const SizedBox(height: 20),
+                  const SizedBox(height: 18),
 
-                    _field("الاسم الكامل", nameCtrl, required: true),
-                    _field("نبذة عني", aboutCtrl, maxLines: 3),
-                    _field("رقم الهاتف", phoneCtrl,
-                        keyboard: TextInputType.phone),
-                    _field("اسم العيادة", clinicNameCtrl),
-                    _field("عنوان العيادة", clinicAddressCtrl),
+                  field("الاسم الكامل", nameCtrl, required: true),
+                  field("نبذة عني", bioCtrl, maxLines: 3),
 
-                    const SizedBox(height: 24),
-
-                    ElevatedButton(
-                      onPressed: _save,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF2B7BE4),
-                        minimumSize: const Size(double.infinity, 52),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(14),
-                        ),
-                      ),
-                      child: const Text(
-                        "حفظ التعديلات",
-                        style: TextStyle(color: Colors.white, fontSize: 16),
-                      ),
+                  const SizedBox(height: 10),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: Text(
+                      "أيام الدوام",
+                      style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
-                  ],
-                ),
+                  ),
+
+                  Wrap(
+                    spacing: 6,
+                    children: days.map((d) {
+                      final sel = selectedDays.contains(d);
+                      return ChoiceChip(
+                        label: Text(d),
+                        selected: sel,
+                        onSelected: (_) {
+                          setState(() {
+                            sel ? selectedDays.remove(d) : selectedDays.add(d);
+                          });
+                        },
+                      );
+                    }).toList(),
+                  ),
+
+                  field("بداية الدوام", startCtrl,
+                      readOnly: true, onTap: () => pickTime(startCtrl)),
+                  field("نهاية الدوام", endCtrl,
+                      readOnly: true, onTap: () => pickTime(endCtrl)),
+
+                  const SizedBox(height: 22),
+
+                  ElevatedButton(
+                    onPressed: save,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: mainBlue,
+                      minimumSize: const Size(double.infinity, 52),
+                    ),
+                    child: const Text("حفظ التعديلات"),
+                  ),
+                ],
               ),
-            );
-          },
-        ),
+            ),
+          );
+        },
       ),
     );
   }
 
-
-  ImageProvider? _buildImage(ProfileController c) {
-    if (c.imagePath.isNotEmpty) {
-      return FileImage(File(c.imagePath));
-    }
-    if (c.avatarUrl.isNotEmpty &&
-        !c.avatarUrl.contains("example.com")) {
-      return NetworkImage(c.avatarUrl);
-    }
-    return null;
-  }
-
-  Widget _field(
+  Widget field(
     String label,
     TextEditingController ctrl, {
     int maxLines = 1,
-    TextInputType keyboard = TextInputType.text,
+    bool readOnly = false,
     bool required = false,
+    VoidCallback? onTap,
   }) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10),
+      padding: const EdgeInsets.symmetric(vertical: 8),
       child: TextFormField(
         controller: ctrl,
+        readOnly: readOnly,
         maxLines: maxLines,
-        keyboardType: keyboard,
         validator: required
             ? (v) => v == null || v.isEmpty ? "هذا الحقل مطلوب" : null
             : null,
+        onTap: onTap,
         decoration: InputDecoration(
           labelText: label,
           filled: true,
           fillColor: Colors.grey.shade100,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide.none,
           ),
         ),
       ),
