@@ -233,7 +233,6 @@ class LoginDoctorController extends GetxController {
     try {
       BotToast.showLoading();
 
-      /// 🔵 الرابط الكامل لطلب تسجيل الدخول
       final url = Uri.parse("$baseUrl/api/doctor/login");
 
       final response = await http.post(
@@ -249,7 +248,6 @@ class LoginDoctorController extends GetxController {
 
       final data = jsonDecode(response.body);
 
-      /// إذا فشل تسجيل الدخول
       if (response.statusCode != 200) {
         BotToast.showText(
           text: data["message"] ?? "خطأ في تسجيل الدخول",
@@ -258,14 +256,10 @@ class LoginDoctorController extends GetxController {
         return;
       }
 
-      /// استخراج البيانات
       final token = data["token"];
       final doctorJson = data["user"];
-
-      /// تحويل JSON إلى Model
       final doctor = DoctorModel.fromJson(doctorJson);
 
-      /// 🔵 حفظ البيانات في التخزين المحلي
       await box.write("token", token);
       await box.write("doctor", doctor.toJson());
       await box.write("doctorId", doctor.id);
@@ -276,7 +270,6 @@ class LoginDoctorController extends GetxController {
 
       BotToast.showText(text: "تم تسجيل الدخول بنجاح 🎉");
 
-      /// 🔵 الانتقال للصفحة الرئيسية
       Get.off(() => HomeWithBottomNav());
     } on SocketException {
       BotToast.showText(

@@ -29,7 +29,6 @@ class SplashScreen extends StatelessWidget {
 
                 const SizedBox(height: 10),
 
-                /// اسم التطبيق
                 const Text(
                   "SmartCare",
                   style: TextStyle(
@@ -48,7 +47,6 @@ class SplashScreen extends StatelessWidget {
 
                 const SizedBox(height: 40),
 
-                /// مؤشّر تحميل
                 const CircularProgressIndicator(strokeWidth: 4),
               ],
             ),

@@ -96,7 +96,6 @@ class _NotificationsPageState extends State<NotificationsPage>
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
-                            // Header (مع أنميشن دخول)
                             AnimatedBuilder(
                               animation: _headerController,
                               builder: (context, child) {
@@ -192,7 +191,6 @@ class _NotificationsPageState extends State<NotificationsPage>
                                           ],
                                         ),
                                         const Spacer(),
-                                        // عداد الاشعارات الجديدة
                                         Container(
                                           padding: const EdgeInsets.symmetric(
                                             horizontal: 12,
@@ -224,7 +222,6 @@ class _NotificationsPageState extends State<NotificationsPage>
                                     ),
                                     const SizedBox(height: 12),
 
-                                    // شريط البحث و زر تعليم الكل كمقروء
                                     Row(
                                       children: [
                                         Expanded(
@@ -293,7 +290,7 @@ class _NotificationsPageState extends State<NotificationsPage>
 
                             const SizedBox(height: 14),
 
-                            // فلاتر (جميع - جديدة - مقروءة)
+                            // فلترة حسب  (جميع - جديدة - مقروءة)
                             Row(
                               children:
                                   controller.filters.map((f) {
@@ -379,7 +376,6 @@ class _NotificationsPageState extends State<NotificationsPage>
 
                             const SizedBox(height: 12),
 
-                            // قائمة الاشعارات
                             Expanded(
                               child: AnimatedBuilder(
                                 animation: _listController,
@@ -452,7 +448,6 @@ class _NotificationsPageState extends State<NotificationsPage>
                                               direction:
                                                   DismissDirection.endToStart,
                                               confirmDismiss: (_) async {
-                                                // يمكن تغيير سلوك الحذف لأرشفة بدلاً من حذف
                                                 final res = await showDialog<
                                                   bool
                                                 >(
@@ -575,7 +570,7 @@ class _NotificationsPageState extends State<NotificationsPage>
                                                         CrossAxisAlignment
                                                             .start,
                                                     children: [
-                                                      // أيقونة نوع الاشعار
+                                                      // أيقونة حسب  نوع الاشعار
                                                       Container(
                                                         width: 52,
                                                         height: 52,

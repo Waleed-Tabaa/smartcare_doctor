@@ -30,7 +30,7 @@ class AppointmentPage extends StatelessWidget {
           ),
           body: Column(
             children: [
-              // ================= CALENDAR =================
+              // ================= هاد جدول التاريخ  =================
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: const BoxDecoration(
@@ -49,7 +49,6 @@ class AppointmentPage extends StatelessWidget {
                 ),
               ),
 
-              // ================= HEADER =================
               Padding(
                 padding: const EdgeInsets.all(16),
                 child: Row(
@@ -68,7 +67,6 @@ class AppointmentPage extends StatelessWidget {
                 ),
               ),
 
-              // ================= LIST =================
               Expanded(
                 child: controller.appointments.isEmpty
                     ? const Center(
@@ -106,7 +104,6 @@ class AppointmentPage extends StatelessWidget {
     );
   }
 
-  // ================= CREATE APPOINTMENT SHEET =================
   void _openCreateAppointmentSheet(BuildContext context) {
     final controller = Get.find<AppointmentController>();
     final reasonCtrl = TextEditingController();
@@ -136,7 +133,6 @@ class AppointmentPage extends StatelessWidget {
 
                   const SizedBox(height: 16),
 
-                  // ===== PATIENT DROPDOWN =====
                   if (controller.patients.isEmpty)
                     const Center(
                       child: Padding(
@@ -170,7 +166,6 @@ class AppointmentPage extends StatelessWidget {
 
                   const SizedBox(height: 12),
 
-                  // ===== REASON =====
                   TextField(
                     controller: reasonCtrl,
                     decoration: const InputDecoration(
@@ -181,7 +176,6 @@ class AppointmentPage extends StatelessWidget {
 
                   const SizedBox(height: 12),
 
-                  // ===== START TIME =====
                   ElevatedButton(
                     onPressed: () async {
                       final t = await showTimePicker(
@@ -210,7 +204,6 @@ class AppointmentPage extends StatelessWidget {
 
                   const SizedBox(height: 8),
 
-                  // ===== END TIME =====
                   ElevatedButton(
                     onPressed: () async {
                       if (startAt == null) return;
@@ -241,7 +234,6 @@ class AppointmentPage extends StatelessWidget {
 
                   const SizedBox(height: 16),
 
-                  // ===== CREATE BUTTON =====
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       backgroundColor: mainBlue,

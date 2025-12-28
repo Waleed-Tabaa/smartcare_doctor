@@ -776,7 +776,7 @@ class HomeView extends StatelessWidget {
   }
 }
 
-/// ===== موجهة الموجة =====
+
 class _WaveClipper extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {

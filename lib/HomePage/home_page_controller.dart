@@ -39,7 +39,6 @@ class HomeController extends GetxController {
     update();
   }
 
-  /// تحديث الوقت
   void updateTime() {
     currentDateTime = DateFormat(
       'EEEE، d MMM yyyy | HH:mm',
@@ -48,7 +47,6 @@ class HomeController extends GetxController {
     update();
   }
 
-  /// تحديث البيانات
   void refresh() async {
     // loading = true;
     // error = null;

@@ -9,7 +9,6 @@ class PatientsListPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetBuilder<ChatController>(
       initState: (_) {
-        // 🔥 هذا السطر هو الحل
         Get.find<ChatController>().fetchConversations();
       },
       builder: (controller) {

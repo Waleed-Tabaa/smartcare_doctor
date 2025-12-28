@@ -10,7 +10,7 @@ class ChatController extends GetxController {
   final box = GetStorage();
   final baseUrl = "https://final-production-8fa9.up.railway.app";
 
-  final int myUserId = 8; // مؤقت
+  final int myUserId = 8; 
 
   List<Conversation> conversations = [];
   List<ChatMessage> messages = [];
@@ -23,7 +23,6 @@ class ChatController extends GetxController {
     "Content-Type": "application/json",
   };
 
-  // ====== CONVERSATIONS ======
   Future<void> fetchConversations() async {
     final res = await http.get(
       Uri.parse("$baseUrl/api/chat/conversations"),
@@ -41,7 +40,6 @@ class ChatController extends GetxController {
     }
   }
 
-  // ====== OPEN CHAT ======
   Future<void> openConversation(int id) async {
     print('OPEN CHAT ID => $id');
 

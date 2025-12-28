@@ -57,7 +57,7 @@ class HomeWithBottomNav extends GetView<BottomNavController> {
   Widget _getBody(int index) {
     switch (index) {
       case 0:
-        return const HomeView(); // الصفحة الرئيسية مع الواجهة التي أرسلتها
+        return const HomeView(); 
       case 1:
         return PatientsPage();
       case 2:

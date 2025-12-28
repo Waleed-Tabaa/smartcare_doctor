@@ -27,7 +27,6 @@ class ProfileView extends StatelessWidget {
                   : SingleChildScrollView(
                     child: Column(
                       children: [
-                        // ================= HEADER =================
                         Container(
                           width: double.infinity,
                           padding: const EdgeInsets.symmetric(
@@ -50,7 +49,6 @@ class ProfileView extends StatelessWidget {
                           ),
                           child: Column(
                             children: [
-                              // ============== AVATAR ==============
                               CircleAvatar(
                                 radius: 42,
                                 backgroundColor: Colors.white.withOpacity(0.2),
@@ -111,7 +109,6 @@ class ProfileView extends StatelessWidget {
 
                         const SizedBox(height: 22),
 
-                        // ================= CLINIC INFO =================
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 16),
                           child: Container(
@@ -174,7 +171,6 @@ class ProfileView extends StatelessWidget {
 
                         const SizedBox(height: 24),
 
-                        // ================= EDIT BUTTON =================
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 16),
                           child: ElevatedButton.icon(
@@ -199,8 +195,6 @@ class ProfileView extends StatelessWidget {
                         ),
 
                         const SizedBox(height: 12),
-
-                        // ================= LOGOUT =================
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 16),
                           child: OutlinedButton.icon(
@@ -231,7 +225,6 @@ class ProfileView extends StatelessWidget {
     );
   }
 
-  // ================= HELPERS =================
 
   ImageProvider? _buildProfileImage(ProfileController c) {
     if (c.imagePath.isNotEmpty) {

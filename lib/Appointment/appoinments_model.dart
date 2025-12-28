@@ -18,7 +18,6 @@ class Appointment {
   });
 
   static DateTime _parseDate(String value) {
-    // هذا الشكل يطابق API تبعك بالضبط
     return DateFormat('yyyy-MM-dd H:mm:ss').parse(value);
   }
 

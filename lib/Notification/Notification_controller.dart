@@ -111,7 +111,8 @@ class NotificationsController extends GetxController {
 
   void _sortNotifications() {
     notificationModel.data.sort((a, b) {
-      // أولاً: غير المقروء قبل المقروء
+
+
       final aRead = a.isRead == 0;
       final bRead = b.isRead == 0;
       if (aRead != bRead) return aRead ? 1 : -1;
@@ -146,7 +147,7 @@ class NotificationsController extends GetxController {
   List<Datum> get filteredNotifications {
     List<Datum> list = List.from(notificationModel.data);
 
-    // فلتر
+    // فلترنا الاشعارات 
     if (selectedFilter == "جديدة") {
       list = list.where((n) => n.isRead == 0).toList();
     } else if (selectedFilter == "مقروءة") {

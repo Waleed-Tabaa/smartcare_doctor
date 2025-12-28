@@ -52,7 +52,7 @@ class PatientsController extends GetxController {
     update();
 
     Fluttertoast.showToast(
-      msg: "تم حفظ بيانات المريض بنجاح ✅",
+      msg: "تم حفظ بيانات المريض بنجاح ",
       backgroundColor: Colors.green,
       textColor: Colors.white,
       fontSize: 16,

@@ -17,10 +17,8 @@ class SplashScreenController extends GetxController {
     bool isLoggedIn = box.read("isLoggedIn") ?? false;
 
     if (isLoggedIn) {
-      // المستخدم مسجّل دخول → روح على الهوم
       Get.offAllNamed("/HomeWithBottomNav");
     } else {
-      // غير مسجل دخول → روح على صفحة تسجيل الدخول
       Get.offAllNamed("/login");
     }
   }
