@@ -16,7 +16,7 @@ class ProfileController extends GetxController {
   String name = "";
   String about = "";
   String avatarUrl = "";
-  String imagePath = "";
+  String imagePath = "";       // ← الصورة المحلية
 
   List<String> workingDays = [];
   String startTime = "";
@@ -27,9 +27,24 @@ class ProfileController extends GetxController {
   @override
   Future onInit() async {
     super.onInit();
+
+    loadLocalAvatar();   // ← استرجاع الصورة المحفوظة
     await fetchProfile();
   }
 
+  // -------- LOCAL AVATAR --------
+  void setLocalAvatar(String path) {
+    imagePath = path;
+    box.write("local_avatar", path);
+    update();
+  }
+
+  void loadLocalAvatar() {
+    final stored = box.read("local_avatar");
+    if (stored != null) imagePath = stored;
+  }
+
+  // -------- FETCH PROFILE --------
   Future<void> fetchProfile() async {
     try {
       isLoading = true;
@@ -65,7 +80,7 @@ class ProfileController extends GetxController {
           .toList();
 
       startTime = (profileModel.startTime ?? "").toString();
-      endTime   = (profileModel.endTime ?? "").toString();
+      endTime = (profileModel.endTime ?? "").toString();
 
       update();
     } finally {
@@ -74,7 +89,8 @@ class ProfileController extends GetxController {
     }
   }
 
-  Future<bool> updateProfileApi({
+  // -------- UPDATE PROFILE --------
+  Future<dynamic> updateProfileApi({
     required String fullName,
     required String bio,
     required List<String> days,
@@ -84,8 +100,8 @@ class ProfileController extends GetxController {
     try {
       BotToast.showLoading();
 
-      final rawToken = box.read("token");
-      if (rawToken == null) return false;
+      final token = box.read("token");
+      if (token == null) return {"ok": false, "msg": "Token missing"};
 
       final body = {
         "full_name": fullName,
@@ -103,52 +119,38 @@ class ProfileController extends GetxController {
       final res = await http.post(
         Uri.parse("$baseUrl/api/doctor/profile/update"),
         headers: {
-          "Authorization": "Bearer $rawToken",
+          "Authorization": "Bearer $token",
           "Accept": "application/json",
           "Content-Type": "application/json",
         },
         body: jsonEncode(body),
       );
 
-      log(res.body, name: "updateProfileApi");
-
       BotToast.closeAllLoading();
 
-      if (res.statusCode == 200) {
-        await fetchProfile();   // ← مهم لعرض التحديث فورًا
-        return true;
+      if (res.statusCode == 422) {
+        final data = jsonDecode(res.body);
+
+        final errors = (data["errors"] as Map).entries
+            .map((e) => "- ${e.value[0]}")
+            .join("\n");
+
+        return {
+          "ok": false,
+          "msg": data["message"] ?? "Validation error",
+          "details": errors,
+        };
       }
 
-      return false;
-    } catch (_) {
+      if (res.statusCode == 200) {
+        await fetchProfile();
+        return {"ok": true};
+      }
+
+      return {"ok": false, "msg": "Unknown server error"};
+    } catch (e) {
       BotToast.closeAllLoading();
-      return false;
+      return {"ok": false, "msg": e.toString()};
     }
-  }
-
-  Future<void> uploadAvatar(File file) async {
-    final rawToken = box.read("token");
-    if (rawToken == null) return;
-
-    final request = http.MultipartRequest(
-      "POST",
-      Uri.parse("$baseUrl/api/doctor/upload-avatar"),
-    );
-
-    request.headers["Authorization"] = "Bearer $rawToken";
-    request.files.add(await http.MultipartFile.fromPath("avatar", file.path));
-
-    final response = await request.send();
-    final resp = await http.Response.fromStream(response);
-
-    if (resp.statusCode == 200) {
-      final data = jsonDecode(resp.body);
-      avatarUrl = data["avatar_url"];
-
-      imagePath = "";     // ← نوقف FileImage
-      await fetchProfile(); // ← يحدّث الشاشتين
-    }
-
-    update();
   }
 }

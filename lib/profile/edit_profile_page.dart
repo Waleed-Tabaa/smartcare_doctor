@@ -22,7 +22,13 @@ class _EditProfileViewState extends State<EditProfileView> {
   late TextEditingController endCtrl;
 
   final days = [
-    "Saturday","Sunday","Monday","Tuesday","Wednesday","Thursday","Friday"
+    "Saturday",
+    "Sunday",
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
   ];
 
   List<String> selectedDays = [];
@@ -35,11 +41,12 @@ class _EditProfileViewState extends State<EditProfileView> {
     bioCtrl = TextEditingController(text: c.about);
 
     startCtrl = TextEditingController(
-      text: c.startTime.contains(":") ? c.startTime.substring(0,5) : c.startTime,
+      text:
+          c.startTime.contains(":") ? c.startTime.substring(0, 5) : c.startTime,
     );
 
     endCtrl = TextEditingController(
-      text: c.endTime.contains(":") ? c.endTime.substring(0,5) : c.endTime,
+      text: c.endTime.contains(":") ? c.endTime.substring(0, 5) : c.endTime,
     );
 
     selectedDays = List.from(c.workingDays);
@@ -53,22 +60,25 @@ class _EditProfileViewState extends State<EditProfileView> {
 
     if (t != null) {
       ctrl.text =
-          "${t.hour.toString().padLeft(2,'0')}:${t.minute.toString().padLeft(2,'0')}";
+          "${t.hour.toString().padLeft(2, '0')}:${t.minute.toString().padLeft(2, '0')}";
     }
   }
 
   Future pickImage() async {
-    final img =
-        await ImagePicker().pickImage(source: ImageSource.gallery, imageQuality: 80);
+    final img = await ImagePicker().pickImage(
+      source: ImageSource.gallery,
+      imageQuality: 80,
+    );
+
     if (img != null) {
-      await c.uploadAvatar(File(img.path));
+      c.setLocalAvatar(img.path);
     }
   }
 
   Future save() async {
     if (!form.currentState!.validate()) return;
 
-    final ok = await c.updateProfileApi(
+    final result = await c.updateProfileApi(
       fullName: nameCtrl.text.trim(),
       bio: bioCtrl.text.trim(),
       days: selectedDays,
@@ -76,8 +86,25 @@ class _EditProfileViewState extends State<EditProfileView> {
       end: endCtrl.text.trim(),
     );
 
-    BotToast.showText(text: ok ? "تم التحديث" : "فشل الحفظ");
-    if (ok) Get.back();
+    if (result["ok"] == true) {
+      BotToast.showText(text: "تم التحديث بنجاح");
+      Get.back();
+    } else {
+      showDialog(
+        context: context,
+        builder:
+            (_) => AlertDialog(
+              title: const Text("حدث خطأ"),
+              content: Text("${result["msg"]}\n\n${result["details"] ?? ""}"),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text("حسناً"),
+                ),
+              ],
+            ),
+      );
+    }
   }
 
   @override
@@ -86,14 +113,21 @@ class _EditProfileViewState extends State<EditProfileView> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("تعديل الملف الشخصي"),
+        title: const Text(
+          "تعديل الملف الشخصي",
+          style: TextStyle(color: Colors.white),
+        ),
         backgroundColor: mainBlue,
       ),
       body: GetBuilder<ProfileController>(
         builder: (c) {
           ImageProvider? img;
-          if (c.imagePath.isNotEmpty) img = FileImage(File(c.imagePath));
-          else if (c.avatarUrl.isNotEmpty) img = NetworkImage(c.avatarUrl);
+
+          if (c.imagePath.isNotEmpty) {
+            img = FileImage(File(c.imagePath));
+          } else if (c.avatarUrl.isNotEmpty) {
+            img = NetworkImage(c.avatarUrl);
+          }
 
           return SingleChildScrollView(
             padding: const EdgeInsets.all(16),
@@ -107,9 +141,10 @@ class _EditProfileViewState extends State<EditProfileView> {
                       radius: 55,
                       backgroundColor: Colors.grey.shade300,
                       backgroundImage: img,
-                      child: img == null
-                          ? const Icon(Icons.camera_alt, size: 34)
-                          : null,
+                      child:
+                          img == null
+                              ? const Icon(Icons.camera_alt, size: 34)
+                              : null,
                     ),
                   ),
 
@@ -119,34 +154,47 @@ class _EditProfileViewState extends State<EditProfileView> {
                   field("نبذة عني", bioCtrl, maxLines: 3),
 
                   const SizedBox(height: 10),
+
                   Align(
                     alignment: Alignment.centerRight,
-                    child: Text(
+                    child: const Text(
                       "أيام الدوام",
-                      style: const TextStyle(fontWeight: FontWeight.bold),
+                      style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ),
 
                   Wrap(
                     spacing: 6,
-                    children: days.map((d) {
-                      final sel = selectedDays.contains(d);
-                      return ChoiceChip(
-                        label: Text(d),
-                        selected: sel,
-                        onSelected: (_) {
-                          setState(() {
-                            sel ? selectedDays.remove(d) : selectedDays.add(d);
-                          });
-                        },
-                      );
-                    }).toList(),
+                    children:
+                        days.map((d) {
+                          final sel = selectedDays.contains(d);
+
+                          return ChoiceChip(
+                            label: Text(d),
+                            selected: sel,
+                            onSelected: (_) {
+                              setState(() {
+                                sel
+                                    ? selectedDays.remove(d)
+                                    : selectedDays.add(d);
+                              });
+                            },
+                          );
+                        }).toList(),
                   ),
 
-                  field("بداية الدوام", startCtrl,
-                      readOnly: true, onTap: () => pickTime(startCtrl)),
-                  field("نهاية الدوام", endCtrl,
-                      readOnly: true, onTap: () => pickTime(endCtrl)),
+                  field(
+                    "بداية الدوام",
+                    startCtrl,
+                    readOnly: true,
+                    onTap: () => pickTime(startCtrl),
+                  ),
+                  field(
+                    "نهاية الدوام",
+                    endCtrl,
+                    readOnly: true,
+                    onTap: () => pickTime(endCtrl),
+                  ),
 
                   const SizedBox(height: 22),
 
@@ -156,7 +204,10 @@ class _EditProfileViewState extends State<EditProfileView> {
                       backgroundColor: mainBlue,
                       minimumSize: const Size(double.infinity, 52),
                     ),
-                    child: const Text("حفظ التعديلات"),
+                    child: const Text(
+                      "حفظ التعديلات",
+                      style: TextStyle(color: Colors.white),
+                    ),
                   ),
                 ],
               ),
@@ -181,17 +232,16 @@ class _EditProfileViewState extends State<EditProfileView> {
         controller: ctrl,
         readOnly: readOnly,
         maxLines: maxLines,
-        validator: required
-            ? (v) => v == null || v.isEmpty ? "هذا الحقل مطلوب" : null
-            : null,
+        validator:
+            required
+                ? (v) => v == null || v.isEmpty ? "هذا الحقل مطلوب" : null
+                : null,
         onTap: onTap,
         decoration: InputDecoration(
           labelText: label,
           filled: true,
           fillColor: Colors.grey.shade100,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
         ),
       ),
     );
