@@ -6,11 +6,10 @@ import 'package:get_storage/get_storage.dart';
 import 'package:intl/intl.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:smartcare/Appointment/appoinments_model.dart';
-import 'package:smartcare/Login/login_model.dart';
+import 'package:smartcare/config/api_config.dart';
 
 class AppointmentController extends GetxController {
   final box = GetStorage();
-  final String baseUrl = "https://final-production-8fa9.up.railway.app";
 
   DateTime selectedDate = DateTime.now();
 
@@ -21,10 +20,10 @@ class AppointmentController extends GetxController {
   int? selectedPatientId;
 
   Map<String, String> get _headers => {
-    "Authorization": "Bearer ${box.read("token")}",
-    "Accept": "application/json",
-    "Content-Type": "application/json",
-  };
+        "Authorization": "Bearer ${box.read("token")}",
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+      };
 
   @override
   void onInit() {
@@ -36,20 +35,20 @@ class AppointmentController extends GetxController {
   Future<void> fetchAllAppointments() async {
     try {
       final response = await http.get(
-        Uri.parse("$baseUrl/api/appointments"),
+        Uri.parse("${ApiConfig.baseUrl}/api/appointments"),
         headers: _headers,
       );
-      log(
-        response.statusCode.toString(),
-        name: "fetchAllAppointments statusCode",
-      );
+
+      log(response.statusCode.toString(),
+          name: "fetchAllAppointments statusCode");
       log(response.body.toString(), name: "fetchAllAppointments body");
+
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        allAppointments =
-            (data['appointments'] as List)
-                .map((e) => Appointment.fromJson(e))
-                .toList();
+
+        allAppointments = (data['appointments'] as List)
+            .map((e) => Appointment.fromJson(e))
+            .toList();
 
         filterByDate(selectedDate);
       }
@@ -59,25 +58,37 @@ class AppointmentController extends GetxController {
   void filterByDate(DateTime date) {
     selectedDate = date;
 
-    appointments =
-        allAppointments.where((a) {
-          return DateFormat('yyyy-MM-dd').format(a.startAt) ==
-              DateFormat('yyyy-MM-dd').format(date);
-        }).toList();
+    appointments = allAppointments.where((a) {
+      return DateFormat('yyyy-MM-dd').format(a.startAt) ==
+          DateFormat('yyyy-MM-dd').format(date);
+    }).toList();
 
     update();
+  }
+
+  /// 🔒 حماية من Crash الـ Dropdown
+  void safeSelectPatient() {
+    final ids = patients.map((e) => e['user_id']).toList();
+
+    if (selectedPatientId != null && !ids.contains(selectedPatientId)) {
+      selectedPatientId = null;
+    }
   }
 
   Future<void> fetchPatients() async {
     try {
       final response = await http.get(
-        Uri.parse("$baseUrl/api/patients"),
+        Uri.parse("${ApiConfig.baseUrl}/api/patients"),
         headers: _headers,
       );
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
+
         patients = List<Map<String, dynamic>>.from(data['patients']);
+
+        safeSelectPatient(); 
+
         update();
       }
     } catch (_) {}
@@ -96,7 +107,7 @@ class AppointmentController extends GetxController {
       BotToast.showLoading();
 
       final response = await http.post(
-        Uri.parse("$baseUrl/api/appointments"),
+        Uri.parse("${ApiConfig.baseUrl}/api/appointments"),
         headers: _headers,
         body: jsonEncode({
           "doctor_id": doctorId,
@@ -114,6 +125,7 @@ class AppointmentController extends GetxController {
         await fetchAllAppointments();
         return true;
       }
+
       return false;
     } catch (_) {
       BotToast.closeAllLoading();

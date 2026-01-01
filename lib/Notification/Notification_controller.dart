@@ -1,15 +1,15 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'package:flutter/widgets.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:bot_toast/bot_toast.dart';
 import 'package:get/get.dart';
 import 'package:smartcare/Notification/notification_model.dart';
+import 'package:smartcare/config/api_config.dart';
 
 class NotificationsController extends GetxController {
   final box = GetStorage();
-
-  final String baseUrl = "https://final-production-8fa9.up.railway.app";
   final List<String> filters = ["جميع الإشعارات", "جديدة", "مقروءة"];
   String selectedFilter = "جميع الإشعارات";
 
@@ -56,7 +56,10 @@ class NotificationsController extends GetxController {
 
   bool isLoading = false;
 
-  late NotificationModel notificationModel;
+  NotificationModel notificationModel = NotificationModel(
+    message: '',
+    data: [],
+  );
 
   Future<void> fetchNotifications() async {
     try {
@@ -74,7 +77,7 @@ class NotificationsController extends GetxController {
       // }
 
       final response = await http.get(
-        Uri.parse("$baseUrl/api/notifications"),
+        Uri.parse("${ApiConfig.baseUrl}/api/notifications"),
         headers: {
           "Authorization": "Bearer $token",
           "Accept": "application/json",
@@ -104,15 +107,15 @@ class NotificationsController extends GetxController {
 
   @override
   Future onInit() async {
-    await fetchNotifications();
-    _sortNotifications();
     super.onInit();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await fetchNotifications();
+      _sortNotifications();
+    });
   }
 
   void _sortNotifications() {
     notificationModel.data.sort((a, b) {
-
-
       final aRead = a.isRead == 0;
       final bRead = b.isRead == 0;
       if (aRead != bRead) return aRead ? 1 : -1;
@@ -147,7 +150,7 @@ class NotificationsController extends GetxController {
   List<Datum> get filteredNotifications {
     List<Datum> list = List.from(notificationModel.data);
 
-    // فلترنا الاشعارات 
+    // فلترنا الاشعارات
     if (selectedFilter == "جديدة") {
       list = list.where((n) => n.isRead == 0).toList();
     } else if (selectedFilter == "مقروءة") {

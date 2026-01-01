@@ -10,6 +10,7 @@ import 'package:smartcare/HomePage/homePage.dart';
 import 'package:smartcare/HomePage/home_page_controller.dart';
 import 'package:smartcare/Login/Login_doctor.dart';
 import 'package:smartcare/Login/Login_doctor_controller.dart';
+import 'package:smartcare/MedicalRecords/medical_records_page.dart';
 import 'package:smartcare/Notification/Notification.dart';
 import 'package:smartcare/Patient/add_patients.dart';
 import 'package:smartcare/Patient/patient_controller.dart';
@@ -20,30 +21,49 @@ import 'package:smartcare/chat/chat_page.dart';
 import 'package:smartcare/profile/edit_profile_page.dart';
 import 'package:smartcare/profile/profile_page.dart';
 import 'package:smartcare/splash_screen.dart';
+import 'package:smartcare/NewPage/new_page.dart';
+import 'package:smartcare/LabTests/lab_tests_list_page.dart';
+import 'package:smartcare/LabTests/lab_test_controller.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await GetStorage.init();
   await initializeDateFormatting('ar', null);
-  Get.put(LoginDoctorController());
-  Get.put(BottomNavController());
-  // Get.put(PatientsController());
-  Get.put(HomeController());
-  Get.put(ChatController(), permanent: true);
   log(GetStorage().read("token").toString(), name: "Token");
   log(GetStorage().read("publicKey").toString(), name: "publicKey");
   runApp(SmartCareApp());
 }
 
-class SmartCareApp extends StatelessWidget {
-  final storage = GetStorage();
-
+class SmartCareApp extends StatefulWidget {
   SmartCareApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    bool isLoggedIn = storage.read("isLoggedIn") ?? false;
+  State<SmartCareApp> createState() => _SmartCareAppState();
+}
 
+class _SmartCareAppState extends State<SmartCareApp> {
+  final storage = GetStorage();
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // Register controllers after first frame so BotToast is initialized
+      Get.put(LoginDoctorController());
+      Get.put(PatientsController(), permanent: true);
+      // Get.put(BottomNavController());
+      // Get.put(BottomNavController());
+      Get.put(BottomNavController(), permanent: true);
+
+      // Get.put(PatientsController());
+      Get.put(HomeController());
+      Get.put(ChatController(), permanent: true);
+      Get.put(LabTestController());
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       title: "SmartCare",
@@ -63,6 +83,26 @@ class SmartCareApp extends StatelessWidget {
         GetPage(name: "/EditProfileView", page: () => EditProfileView()),
         GetPage(name: "/NotificationsPage", page: () => NotificationsPage()),
         GetPage(name: "/AddPatientView", page: () => AddPatientView()),
+        GetPage(name: "/NewPage", page: () => NewPage()),
+        GetPage(
+          name: '/LabTestsListPage',
+          page: () => LabTestsListPage(),
+          binding: BindingsBuilder(() {
+            Get.put(LabTestController());
+          }),
+        ),
+        // GetPage(name: "/MedicalRecordsPage", page: () => MedicalRecordsPage(patientId: null,)),
+        GetPage(
+          name: "/MedicalRecordsPage",
+          page: () {
+            final args = Get.arguments;
+
+            return MedicalRecordsPage(
+              patientId: args["id"],
+              patientName: args["name"],
+            );
+          },
+        ),
       ],
 
       initialRoute: "/splash",

@@ -370,20 +370,21 @@ class HomeView extends StatelessWidget {
     final size = MediaQuery.of(context).size;
 
     return GetBuilder<HomeController>(
+      init: HomeController(),
       builder: (controller) {
-        if (controller.box.read('isLoggedIn') != true) {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            Get.offAllNamed('/login');
-          });
-          return const Scaffold(
-            body: Center(child: CircularProgressIndicator()),
-          );
-        }
+        // if (controller.box.read('isLoggedIn') != true) {
+        //   WidgetsBinding.instance.addPostFrameCallback((_) {
+        //     Get.offAllNamed('/login');
+        //   });
+        //   return const Scaffold(
+        //     body: Center(child: CircularProgressIndicator()),
+        //   );
+        // }
 
         return Scaffold(
           backgroundColor: Colors.white,
           appBar: AppBar(
-            backgroundColor: Colors.transparent,
+            backgroundColor: Colors.blue,
             elevation: 0,
             title: const Text(
               "لوحة التحكم",
@@ -433,7 +434,7 @@ class HomeView extends StatelessWidget {
                 child: SingleChildScrollView(
                   padding: const EdgeInsets.all(16),
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       _buildHeaderCard(controller, size),
                       const SizedBox(height: 28),
@@ -519,7 +520,7 @@ class HomeView extends StatelessWidget {
           borderRadius: BorderRadius.circular(18),
           gradient: const LinearGradient(
             colors: [Color(0xFF4285F4), Color(0xFF6BA4F8)],
-            begin: Alignment.topLeft,
+            begin: Alignment.topRight,
             end: Alignment.bottomRight,
           ),
           boxShadow: [
@@ -531,7 +532,7 @@ class HomeView extends StatelessWidget {
           ],
         ),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             controller.loading
                 ? _shimmerText(height: 24, width: size.width * 0.6)
@@ -552,8 +553,8 @@ class HomeView extends StatelessWidget {
                 ),
             const SizedBox(height: 12),
             Row(
+              mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                const Icon(Icons.access_time, color: Colors.white),
                 const SizedBox(width: 8),
                 controller.loading
                     ? _shimmerText(height: 16, width: 120)
@@ -561,6 +562,8 @@ class HomeView extends StatelessWidget {
                       controller.currentDateTime,
                       style: const TextStyle(color: Colors.white),
                     ),
+                SizedBox(width: 12.5),
+                const Icon(Icons.access_time, color: Colors.white),
               ],
             ),
           ],
@@ -731,41 +734,69 @@ class HomeView extends StatelessWidget {
   Widget _buildQuickActions(Size size) {
     return FadeInUp(
       duration: const Duration(milliseconds: 850),
-      child: Row(
+      child: Column(
         children: [
-          Expanded(
-            child: ElevatedButton.icon(
-              onPressed: () => Get.find<BottomNavController>().changeIndex(2),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green,
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(14),
+          Row(
+            children: [
+              Expanded(
+                child: ElevatedButton.icon(
+                  onPressed: () {
+                    final controller = Get.find<BottomNavController>();
+                    controller.changeIndex(2);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                  ),
+                  icon: const Icon(Icons.calendar_today, color: Colors.white),
+                  label: const Text(
+                    "المواعيد",
+                    style: TextStyle(color: Colors.white, fontSize: 16),
+                  ),
                 ),
               ),
-              icon: const Icon(Icons.calendar_today, color: Colors.white),
-              label: const Text(
-                "المواعيد",
-                style: TextStyle(color: Colors.white, fontSize: 16),
+              const SizedBox(width: 14),
+              Expanded(
+                child: ElevatedButton.icon(
+                  onPressed: () {
+                    Get.toNamed("/AddPatientView");
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blue,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                  ),
+                  icon: const Icon(Icons.person_add, color: Colors.white),
+                  label: const Text(
+                    "مريض جديد",
+                    style: TextStyle(color: Colors.white, fontSize: 16),
+                  ),
+                ),
               ),
-            ),
+            ],
           ),
-          const SizedBox(width: 14),
-          Expanded(
+          const SizedBox(height: 14),
+          SizedBox(
+            width: double.infinity,
             child: ElevatedButton.icon(
               onPressed: () {
-                Get.toNamed("/AddPatientView");
+                Get.toNamed("/LabTestsListPage");
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue,
+                backgroundColor: Colors.orange,
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(14),
                 ),
               ),
-              icon: const Icon(Icons.person_add, color: Colors.white),
+              icon: const Icon(Icons.science, color: Colors.white),
               label: const Text(
-                "مريض جديد",
+                "فحوصات المختبر (التقارير)",
                 style: TextStyle(color: Colors.white, fontSize: 16),
               ),
             ),
@@ -775,7 +806,6 @@ class HomeView extends StatelessWidget {
     );
   }
 }
-
 
 class _WaveClipper extends CustomClipper<Path> {
   @override

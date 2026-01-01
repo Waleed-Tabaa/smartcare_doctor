@@ -6,17 +6,17 @@ import 'package:bot_toast/bot_toast.dart';
 import 'package:http/http.dart' as http;
 import 'package:get_storage/get_storage.dart';
 import 'profile_model.dart';
+import 'package:smartcare/config/api_config.dart';
 
 class ProfileController extends GetxController {
   final box = GetStorage();
-  final String baseUrl = "https://final-production-8fa9.up.railway.app";
 
   bool isLoading = false;
 
   String name = "";
   String about = "";
   String avatarUrl = "";
-  String imagePath = "";       // ← الصورة المحلية
+  String imagePath = "";      
 
   List<String> workingDays = [];
   String startTime = "";
@@ -28,7 +28,7 @@ class ProfileController extends GetxController {
   Future onInit() async {
     super.onInit();
 
-    loadLocalAvatar();   // ← استرجاع الصورة المحفوظة
+    loadLocalAvatar();   
     await fetchProfile();
   }
 
@@ -44,7 +44,6 @@ class ProfileController extends GetxController {
     if (stored != null) imagePath = stored;
   }
 
-  // -------- FETCH PROFILE --------
   Future<void> fetchProfile() async {
     try {
       isLoading = true;
@@ -54,7 +53,7 @@ class ProfileController extends GetxController {
       if (rawToken == null) return;
 
       final response = await http.get(
-        Uri.parse("$baseUrl/api/doctor/profile/details"),
+        Uri.parse("${ApiConfig.baseUrl}/api/doctor/profile/details"),
         headers: {
           "Authorization": "Bearer $rawToken",
           "Accept": "application/json",
@@ -89,7 +88,6 @@ class ProfileController extends GetxController {
     }
   }
 
-  // -------- UPDATE PROFILE --------
   Future<dynamic> updateProfileApi({
     required String fullName,
     required String bio,
@@ -117,7 +115,7 @@ class ProfileController extends GetxController {
       };
 
       final res = await http.post(
-        Uri.parse("$baseUrl/api/doctor/profile/update"),
+        Uri.parse("${ApiConfig.baseUrl}/api/doctor/profile/update"),
         headers: {
           "Authorization": "Bearer $token",
           "Accept": "application/json",

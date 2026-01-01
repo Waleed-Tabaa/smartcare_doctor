@@ -30,7 +30,6 @@ class AppointmentPage extends StatelessWidget {
           ),
           body: Column(
             children: [
-              // ================= هاد جدول التاريخ  =================
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: const BoxDecoration(
@@ -43,9 +42,7 @@ class AppointmentPage extends StatelessWidget {
                   initialDate: controller.selectedDate,
                   firstDate: DateTime(2020),
                   lastDate: DateTime(2030),
-                  onDateChanged: (date) {
-                    controller.filterByDate(date);
-                  },
+                  onDateChanged: controller.filterByDate,
                 ),
               ),
 
@@ -55,8 +52,10 @@ class AppointmentPage extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      DateFormat('d MMMM yyyy', 'ar')
-                          .format(controller.selectedDate),
+                      DateFormat(
+                        'd MMMM yyyy',
+                        'ar',
+                      ).format(controller.selectedDate),
                       style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
                     Text(
@@ -68,34 +67,35 @@ class AppointmentPage extends StatelessWidget {
               ),
 
               Expanded(
-                child: controller.appointments.isEmpty
-                    ? const Center(
-                        child: Text(
-                          'لا توجد مواعيد في هذا اليوم',
-                          style: TextStyle(color: Colors.grey),
-                        ),
-                      )
-                    : ListView.builder(
-                        padding: const EdgeInsets.all(16),
-                        itemCount: controller.appointments.length,
-                        itemBuilder: (context, index) {
-                          final a = controller.appointments[index];
+                child:
+                    controller.appointments.isEmpty
+                        ? const Center(
+                          child: Text(
+                            'لا توجد مواعيد في هذا اليوم',
+                            style: TextStyle(color: Colors.grey),
+                          ),
+                        )
+                        : ListView.builder(
+                          padding: const EdgeInsets.all(16),
+                          itemCount: controller.appointments.length,
+                          itemBuilder: (context, index) {
+                            final a = controller.appointments[index];
 
-                          return Card(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                            child: ListTile(
-                              title: Text(a.patientName),
-                              subtitle: Text(
-                                '${DateFormat('HH:mm').format(a.startAt)}'
-                                ' - ${DateFormat('HH:mm').format(a.endAt)}'
-                                ' • ${a.reason}',
+                            return Card(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(16),
                               ),
-                            ),
-                          );
-                        },
-                      ),
+                              child: ListTile(
+                                title: Text(a.patientName),
+                                subtitle: Text(
+                                  '${DateFormat('HH:mm').format(a.startAt)}'
+                                  ' - ${DateFormat('HH:mm').format(a.endAt)}'
+                                  ' • ${a.reason}',
+                                ),
+                              ),
+                            );
+                          },
+                        ),
               ),
             ],
           ),
@@ -125,10 +125,7 @@ class AppointmentPage extends StatelessWidget {
                 children: [
                   const Text(
                     "إنشاء موعد جديد",
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
 
                   const SizedBox(height: 16),
@@ -141,23 +138,62 @@ class AppointmentPage extends StatelessWidget {
                       ),
                     )
                   else
+                    // DropdownButtonFormField<int>(
+                    //   value:
+                    //       controller.patients.any(
+                    //             (p) =>
+                    //                 p['user_id'] ==
+                    //                 controller.selectedPatientId,
+                    //           )
+                    //           ? controller.selectedPatientId
+                    //           : null, // 👈 حماية من الكراش
+                    //   items:
+                    //       controller.patients.map((p) {
+                    //         final name =
+                    //             p['full_name'] ??
+                    //             p['name'] ??
+                    //             p['first_name'] ??
+                    //             'مريض بدون اسم';
+                    //         return DropdownMenuItem<int>(
+                    //           value: p['user_id'],
+                    //           child: Text(name.toString()),
+                    //         );
+                    //       }).toList(),
+                    //   onChanged: (v) => controller.selectedPatientId = v,
+                    //   decoration: const InputDecoration(
+                    //     labelText: "اختر المريض",
+                    //     border: OutlineInputBorder(),
+                    //   ),
+                    // ),
                     DropdownButtonFormField<int>(
-                      value: controller.selectedPatientId,
-                      items: controller.patients.map((p) {
-                        final name =
-                            p['full_name'] ??
-                            p['name'] ??
-                            p['first_name'] ??
-                            'مريض بدون اسم';
+                      value:
+                          controller.patients.any(
+                                (p) =>
+                                    p['user_id'] ==
+                                    controller.selectedPatientId,
+                              )
+                              ? controller.selectedPatientId
+                              : null, 
 
-                        return DropdownMenuItem<int>(
-                          value: p['user_id'],
-                          child: Text(name.toString()),
-                        );
-                      }).toList(),
+                      items:
+                          controller.patients.map((p) {
+                            final name =
+                                p['full_name'] ??
+                                p['name'] ??
+                                p['first_name'] ??
+                                'مريض بدون اسم';
+
+                            return DropdownMenuItem<int>(
+                              value: p['user_id'],
+                              child: Text(name.toString()),
+                            );
+                          }).toList(),
+
                       onChanged: (v) {
                         controller.selectedPatientId = v;
+                        controller.update();
                       },
+
                       decoration: const InputDecoration(
                         labelText: "اختر المريض",
                         border: OutlineInputBorder(),

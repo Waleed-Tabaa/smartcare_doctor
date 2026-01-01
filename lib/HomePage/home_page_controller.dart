@@ -47,7 +47,8 @@ class HomeController extends GetxController {
     update();
   }
 
-  void refresh() async {
+  @override
+  void refresh() {
     // loading = true;
     // error = null;
     // update();
@@ -56,6 +57,7 @@ class HomeController extends GetxController {
 
     // loading = false;
     // update();
+    super.refresh();
   }
 
   @override

@@ -193,6 +193,7 @@
 // // }
 
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -201,6 +202,7 @@ import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:smartcare/Login/login_model.dart';
 import 'package:smartcare/buttom_navigation_bar/buttom_navigation_bar.dart';
+import 'package:smartcare/config/api_config.dart';
 
 class LoginDoctorController extends GetxController {
   final emailController = TextEditingController();
@@ -208,10 +210,6 @@ class LoginDoctorController extends GetxController {
   bool isPasswordHidden = true;
 
   final box = GetStorage();
-
-  /// 🔵 رابط السيرفر الأساسي
-  final String baseUrl = "https://final-production-8fa9.up.railway.app";
-  // final String baseUrl = "https://walid.mahmoudalhabash.com";
 
   void togglePasswordVisibility() {
     isPasswordHidden = !isPasswordHidden;
@@ -233,7 +231,7 @@ class LoginDoctorController extends GetxController {
     try {
       BotToast.showLoading();
 
-      final url = Uri.parse("$baseUrl/api/doctor/login");
+      final url = Uri.parse("${ApiConfig.baseUrl}/api/doctor/login");
 
       final response = await http.post(
         url,
@@ -278,7 +276,7 @@ class LoginDoctorController extends GetxController {
       );
     } catch (e) {
       BotToast.showText(text: "حدث خطأ غير متوقع", contentColor: Colors.red);
-      print("LOGIN ERROR: $e");
+      log("LOGIN ERROR: $e", name: "LoginDoctorController");
     }
   }
 

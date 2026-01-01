@@ -106,6 +106,7 @@ class _EditProfileViewState extends State<EditProfileView> {
       );
     }
   }
+  
 
   @override
   Widget build(BuildContext context) {

@@ -5,10 +5,10 @@ import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:smartcare/chat/chat_convarsation_model.dart';
 import 'package:smartcare/chat/chat_model.dart';
+import 'package:smartcare/config/api_config.dart';
 
 class ChatController extends GetxController {
   final box = GetStorage();
-  final baseUrl = "https://final-production-8fa9.up.railway.app";
 
   final int myUserId = 8; 
 
@@ -25,7 +25,7 @@ class ChatController extends GetxController {
 
   Future<void> fetchConversations() async {
     final res = await http.get(
-      Uri.parse("$baseUrl/api/chat/conversations"),
+      Uri.parse("${ApiConfig.baseUrl}/api/chat/conversations"),
       headers: headers,
     );
 
@@ -46,7 +46,7 @@ class ChatController extends GetxController {
     currentConversationId = id;
 
     final res = await http.get(
-      Uri.parse("$baseUrl/api/chat/conversations/$id/messages"),
+      Uri.parse("${ApiConfig.baseUrl}/api/chat/conversations/$id/messages"),
       headers: headers,
     );
 
@@ -71,7 +71,7 @@ class ChatController extends GetxController {
     if (text.trim().isEmpty || currentConversationId == null) return;
 
     final res = await http.post(
-      Uri.parse("$baseUrl/api/chat/messages"),
+      Uri.parse("${ApiConfig.baseUrl}/api/chat/messages"),
       headers: headers,
       body: jsonEncode({
         "conversation_id": currentConversationId,

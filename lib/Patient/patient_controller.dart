@@ -7,11 +7,10 @@ import 'package:bot_toast/bot_toast.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:smartcare/Patient/patient_model.dart';
+import 'package:smartcare/config/api_config.dart';
 
 class PatientsController extends GetxController {
   final box = GetStorage();
-
-  final String baseUrl = "https://final-production-8fa9.up.railway.app";
 
   final formKey = GlobalKey<FormState>();
 
@@ -98,7 +97,7 @@ class PatientsController extends GetxController {
 
   bool isLoading = false;
 
-  late PatientModel patientModel;
+  PatientModel patientModel = PatientModel(message: '', count: 0, patients: []);
 
   Future<void> fetchPatients() async {
     try {
@@ -116,7 +115,7 @@ class PatientsController extends GetxController {
       // }
 
       final response = await http.get(
-        Uri.parse("$baseUrl/api/doctor/my-patients"),
+        Uri.parse("${ApiConfig.baseUrl}/api/doctor/my-patients"),
         headers: {
           "Authorization": "Bearer $token",
           "Accept": "application/json",
@@ -134,6 +133,7 @@ class PatientsController extends GetxController {
 
       update();
     } catch (e) {
+      log(e.toString(), name: "fetchPatients error");
     } finally {
       BotToast.closeAllLoading();
       isLoading = false;
