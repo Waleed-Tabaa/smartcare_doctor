@@ -1,3 +1,5 @@
+// lib/appointment/appointments_controller.dart
+
 import 'dart:convert';
 import 'dart:developer';
 import 'package:get/get.dart';
@@ -12,10 +14,8 @@ class AppointmentController extends GetxController {
   final box = GetStorage();
 
   DateTime selectedDate = DateTime.now();
-
   List<Appointment> allAppointments = [];
   List<Appointment> appointments = [];
-
   List<Map<String, dynamic>> patients = [];
   int? selectedPatientId;
 
@@ -39,40 +39,25 @@ class AppointmentController extends GetxController {
         headers: _headers,
       );
 
-      log(response.statusCode.toString(),
-          name: "fetchAllAppointments statusCode");
-      log(response.body.toString(), name: "fetchAllAppointments body");
-
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-
         allAppointments = (data['appointments'] as List)
             .map((e) => Appointment.fromJson(e))
             .toList();
-
         filterByDate(selectedDate);
       }
-    } catch (_) {}
+    } catch (e) {
+      log("Error fetching appointments: $e");
+    }
   }
 
   void filterByDate(DateTime date) {
     selectedDate = date;
-
     appointments = allAppointments.where((a) {
       return DateFormat('yyyy-MM-dd').format(a.startAt) ==
           DateFormat('yyyy-MM-dd').format(date);
     }).toList();
-
     update();
-  }
-
-  /// 🔒 حماية من Crash الـ Dropdown
-  void safeSelectPatient() {
-    final ids = patients.map((e) => e['user_id']).toList();
-
-    if (selectedPatientId != null && !ids.contains(selectedPatientId)) {
-      selectedPatientId = null;
-    }
   }
 
   Future<void> fetchPatients() async {
@@ -84,14 +69,12 @@ class AppointmentController extends GetxController {
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-
         patients = List<Map<String, dynamic>>.from(data['patients']);
-
-        safeSelectPatient(); 
-
         update();
       }
-    } catch (_) {}
+    } catch (e) {
+      log("Error fetching patients: $e");
+    }
   }
 
   Future<bool> createAppointment({
@@ -105,7 +88,6 @@ class AppointmentController extends GetxController {
 
     try {
       BotToast.showLoading();
-
       final response = await http.post(
         Uri.parse("${ApiConfig.baseUrl}/api/appointments"),
         headers: _headers,
@@ -120,15 +102,18 @@ class AppointmentController extends GetxController {
       );
 
       BotToast.closeAllLoading();
-
       if (response.statusCode == 200 || response.statusCode == 201) {
+        BotToast.showText(text: "تم إنشاء الموعد بنجاح");
         await fetchAllAppointments();
         return true;
+      } else {
+        final error = jsonDecode(response.body);
+        BotToast.showText(text: "فشل: ${error['message']}");
+        return false;
       }
-
-      return false;
-    } catch (_) {
+    } catch (e) {
       BotToast.closeAllLoading();
+      BotToast.showText(text: "حدث خطأ غير متوقع");
       return false;
     }
   }
