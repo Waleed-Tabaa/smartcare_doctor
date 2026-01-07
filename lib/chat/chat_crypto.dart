@@ -5,7 +5,6 @@ import 'package:get_storage/get_storage.dart';
 import 'package:pointycastle/asymmetric/api.dart';
 
 class ChatCrypto {
-  // static final String _privateKeyPem = GetStorage().read('publicKey');
 
   static String decryptMessage(String encryptedBase64) {
     log(_privateKeyPem.toString(), name: "_privateKeyPem.toString()");

@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:smartcare/MedicalRecords/medical_records_page.dart';
 import 'package:smartcare/MedicalVitals/vitals_page.dart';
 import 'package:smartcare/Patient/patient_controller.dart';
+import 'package:smartcare/nutrition/nutrition_recommendations_page.dart';
 
 class PatientsPage extends StatefulWidget {
   const PatientsPage({super.key});
@@ -68,7 +69,6 @@ class _PatientsPageState extends State<PatientsPage>
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              // ----------- HEADER -----------
                               AnimatedBuilder(
                                 animation: _headerController,
                                 builder: (context, child) {
@@ -136,7 +136,6 @@ class _PatientsPageState extends State<PatientsPage>
                                             ],
                                           ),
 
-                                          // 🔵 زر إضافة مريض
                                           ElevatedButton.icon(
                                             onPressed: () {
                                               Get.toNamed("AddPatientView");
@@ -210,7 +209,6 @@ class _PatientsPageState extends State<PatientsPage>
 
                               const SizedBox(height: 16),
 
-                              // ----------- PATIENT LIST -----------
                               AnimatedBuilder(
                                 animation: _listController,
                                 builder: (context, child) {
@@ -329,7 +327,6 @@ class _PatientsPageState extends State<PatientsPage>
     );
   }
 
-  // ⬇️ خيارات المريض (فحوصات — سجل طبي)
   void _openPatientOptions(BuildContext context, patient) {
     showModalBottomSheet(
       context: context,
@@ -387,6 +384,14 @@ class _PatientsPageState extends State<PatientsPage>
                         patientName: patient.fullName,
                       ),
                     );
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.fastfood),
+                  title: const Text("توصيات غذائية (AI)"),
+                  onTap: () {
+                    Navigator.pop(context);
+                    Get.to(() => const NutritionRecommendationsPage());
                   },
                 ),
               ],

@@ -48,7 +48,6 @@ class _SmartCareAppState extends State<SmartCareApp> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      // Register controllers after first frame so BotToast is initialized
       Get.put(LoginDoctorController());
       Get.put(PatientsController(), permanent: true);
       // Get.put(BottomNavController());

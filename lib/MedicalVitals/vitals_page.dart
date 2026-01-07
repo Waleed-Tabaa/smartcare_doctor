@@ -160,7 +160,6 @@ class VitalsPage extends StatelessWidget {
     );
   }
 
-  // *****************  إضافة قراءة جديدة  *****************
   void _openAddDialog(BuildContext context, VitalController c) {
     final type = TextEditingController();
     final value = TextEditingController();
@@ -199,7 +198,6 @@ class VitalsPage extends StatelessWidget {
     );
   }
 
-  // *****************  تعديل قراءة *****************
   void _openEditDialog(BuildContext context, VitalController c, v) {
     final value = TextEditingController(text: v.value);
     final note = TextEditingController(text: v.note ?? "");

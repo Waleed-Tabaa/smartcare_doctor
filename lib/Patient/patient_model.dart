@@ -1,7 +1,3 @@
-// To parse this JSON data, do
-//
-//     final patientModel = patientModelFromJson(jsonString);
-
 import 'dart:convert';
 
 PatientModel patientModelFromJson(String str) =>
@@ -21,8 +17,8 @@ class PatientModel {
   });
 
   factory PatientModel.fromJson(Map<String, dynamic> json) => PatientModel(
-    message: json["message"],
-    count: json["count"],
+    message: json["message"] ?? "",
+    count: json["count"] ?? 0,
     patients:
         json["patients"] == null
             ? []
@@ -42,23 +38,26 @@ class Patient {
   int userId;
   String fullName;
   String gender;
-  String avatarUrl;
+
+  /// قد يكون null من الـ API
+  String? avatarUrl;
+
   String primaryCondition;
 
   Patient({
     required this.userId,
     required this.fullName,
     required this.gender,
-    required this.avatarUrl,
+    this.avatarUrl,
     required this.primaryCondition,
   });
 
   factory Patient.fromJson(Map<String, dynamic> json) => Patient(
     userId: json["user_id"],
-    fullName: json["full_name"],
-    gender: json["gender"],
-    avatarUrl: json["avatar_url"],
-    primaryCondition: json["primary_condition"],
+    fullName: json["full_name"] ?? "",
+    gender: json["gender"] ?? "",
+    avatarUrl: json["avatar_url"] ?? "",
+    primaryCondition: json["primary_condition"] ?? "",
   );
 
   Map<String, dynamic> toJson() => {

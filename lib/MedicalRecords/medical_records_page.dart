@@ -53,7 +53,6 @@ class MedicalRecordsPage extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          /// ================= بطاقة المريض =================
                           Container(
                             padding: const EdgeInsets.all(16),
                             decoration: BoxDecoration(
@@ -125,7 +124,6 @@ class MedicalRecordsPage extends StatelessWidget {
 
                           const SizedBox(height: 12),
 
-                          /// ================= عرض السجلات =================
                           if (c.records.isEmpty)
                             const Center(
                               child: Padding(
@@ -159,7 +157,6 @@ class MedicalRecordsPage extends StatelessWidget {
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
-                                          /// ===== شريط العنوان =====
                                           Row(
                                             mainAxisAlignment:
                                                 MainAxisAlignment.spaceBetween,

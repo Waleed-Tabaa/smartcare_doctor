@@ -138,7 +138,6 @@ class _LabTestDetailsPageState extends State<LabTestDetailsPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // بطاقة معلومات الفحص
                   Container(
                     width: double.infinity,
                     padding: const EdgeInsets.all(20),
@@ -249,7 +248,6 @@ class _LabTestDetailsPageState extends State<LabTestDetailsPage> {
                     const SizedBox(height: 16),
                   ],
 
-                  // معلومات الطبيب
                   if (test.doctor != null) ...[
                     _buildSectionTitle('معلومات الطبيب'),
                     const SizedBox(height: 8),
@@ -274,7 +272,6 @@ class _LabTestDetailsPageState extends State<LabTestDetailsPage> {
                     const SizedBox(height: 16),
                   ],
 
-                  // النتائج
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [

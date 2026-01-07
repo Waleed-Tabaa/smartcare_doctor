@@ -381,135 +381,138 @@ class HomeView extends StatelessWidget {
         //   );
         // }
 
-        return Scaffold(
-          backgroundColor: Colors.white,
-          appBar: AppBar(
-            backgroundColor: Colors.blue,
-            elevation: 0,
-            title: const Text(
-              "لوحة التحكم",
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            actions: [
-              IconButton(
-                onPressed: controller.loading ? null : controller.refresh,
-                icon:
-                    controller.loading
-                        ? const SizedBox(
-                          height: 20,
-                          width: 20,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            color: Colors.white,
-                          ),
-                        )
-                        : const Icon(Icons.refresh, color: Colors.white),
-              ),
-            ],
-          ),
-          body: Stack(
-            children: [
-              Container(
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [Color(0xFF4285F4), Color(0xFF6BA4F8)],
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                  ),
-                ),
-              ),
-
-              ClipPath(
-                clipper: _WaveClipper(),
-                child: Container(
-                  height: size.height * 0.4,
+        return SafeArea(
+          child: Scaffold(
+            backgroundColor: Colors.white,
+            appBar: AppBar(
+              centerTitle: true,
+              backgroundColor: Colors.blue,
+              elevation: 0,
+              title: const Text(
+                "لوحة التحكم",
+                style: TextStyle(
                   color: Colors.white,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
-
-              SafeArea(
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      _buildHeaderCard(controller, size),
-                      const SizedBox(height: 28),
-
-                      if (controller.error != null)
-                        FadeIn(
-                          duration: const Duration(milliseconds: 500),
-                          child: Container(
-                            margin: const EdgeInsets.only(bottom: 16),
-                            padding: const EdgeInsets.all(12),
-                            decoration: BoxDecoration(
-                              color: Colors.red.withOpacity(0.1),
-                              borderRadius: BorderRadius.circular(12),
-                              border: Border.all(color: Colors.red, width: 1),
+              actions: [
+                IconButton(
+                  onPressed: controller.loading ? null : controller.refresh,
+                  icon:
+                      controller.loading
+                          ? const SizedBox(
+                            height: 20,
+                            width: 20,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: Colors.white,
                             ),
-                            child: Row(
-                              children: [
-                                const Icon(
-                                  Icons.error,
-                                  color: Colors.red,
-                                  size: 20,
-                                ),
-                                const SizedBox(width: 8),
-                                Expanded(
-                                  child: Text(
-                                    controller.error!,
-                                    style: const TextStyle(
-                                      color: Colors.red,
-                                      fontSize: 14,
-                                    ),
-                                  ),
-                                ),
-                                TextButton(
-                                  onPressed: controller.refresh,
-                                  child: const Text(
-                                    "إعادة المحاولة",
-                                    style: TextStyle(
-                                      color: Colors.red,
-                                      fontSize: 14,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-
-                      _buildStatsGrid(controller, size),
-                      const SizedBox(height: 30),
-
-                      FadeInUp(
-                        duration: const Duration(milliseconds: 800),
-                        child: const Text(
-                          "إجراءات سريعة",
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-
-                      _buildQuickActions(size),
-                    ],
+                          )
+                          : const Icon(Icons.refresh, color: Colors.white),
+                ),
+              ],
+            ),
+            body: Stack(
+              children: [
+                Container(
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [Color(0xFF4285F4), Color(0xFF6BA4F8)],
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                    ),
                   ),
                 ),
-              ),
-            ],
+
+                ClipPath(
+                  clipper: _WaveClipper(),
+                  child: Container(
+                    height: size.height * 0.4,
+                    color: Colors.white,
+                  ),
+                ),
+
+                SafeArea(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        _buildHeaderCard(controller, size),
+                        const SizedBox(height: 28),
+
+                        if (controller.error != null)
+                          FadeIn(
+                            duration: const Duration(milliseconds: 500),
+                            child: Container(
+                              margin: const EdgeInsets.only(bottom: 16),
+                              padding: const EdgeInsets.all(12),
+                              decoration: BoxDecoration(
+                                color: Colors.red.withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(color: Colors.red, width: 1),
+                              ),
+                              child: Row(
+                                children: [
+                                  const Icon(
+                                    Icons.error,
+                                    color: Colors.red,
+                                    size: 20,
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Expanded(
+                                    child: Text(
+                                      controller.error!,
+                                      style: const TextStyle(
+                                        color: Colors.red,
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                  ),
+                                  TextButton(
+                                    onPressed: controller.refresh,
+                                    child: const Text(
+                                      "إعادة المحاولة",
+                                      style: TextStyle(
+                                        color: Colors.red,
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+
+                        _buildStatsGrid(controller, size),
+                        const SizedBox(height: 30),
+
+                        FadeInUp(
+                          duration: const Duration(milliseconds: 800),
+                          child: const Text(
+                            "إجراءات سريعة",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+
+                        _buildQuickActions(size),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         );
       },
     );
   }
 
-  /// ===== بطاقة الترحيب =====
+  //                              الترحيب
   Widget _buildHeaderCard(HomeController controller, Size size) {
     return FadeInDown(
       duration: const Duration(milliseconds: 600),
@@ -572,7 +575,7 @@ class HomeView extends StatelessWidget {
     );
   }
 
-  /// ===== شبكة الإحصائيات =====
+  ///                                                شبكة الإحصائيات
   Widget _buildStatsGrid(HomeController controller, Size size) {
     return FadeInUp(
       duration: const Duration(milliseconds: 700),
@@ -589,7 +592,7 @@ class HomeView extends StatelessWidget {
                 children: [
                   _buildInfoCard(
                     title: "مواعيد اليوم",
-                    value: controller.todayAppointments.toString(),
+                    // value: controller.todayAppointments.toString(),
                     icon: Icons.calendar_today,
                     color: Colors.green,
                     size: size,
@@ -597,7 +600,7 @@ class HomeView extends StatelessWidget {
                   ),
                   _buildInfoCard(
                     title: "إجمالي المرضى",
-                    value: controller.patientsCount.toString(),
+                    // value: controller.patientsCount.toString(),
                     icon: Icons.people,
                     color: Colors.blue,
                     size: size,
@@ -605,7 +608,7 @@ class HomeView extends StatelessWidget {
                   ),
                   _buildInfoCard(
                     title: "حالات حرجة",
-                    value: controller.criticalCases.toString(),
+                    // value: controller.criticalCases.toString(),
                     icon: Icons.emergency,
                     color: Colors.red,
                     size: size,
@@ -613,7 +616,7 @@ class HomeView extends StatelessWidget {
                   ),
                   _buildInfoCard(
                     title: "رسائل غير مقروءة",
-                    value: controller.newMessages.toString(),
+                    // value: controller.newMessages.toString(),
                     icon: Icons.message,
                     color: Colors.purple,
                     size: size,
@@ -624,10 +627,10 @@ class HomeView extends StatelessWidget {
     );
   }
 
-  /// ===== بطاقة واحدة للإحصائيات =====
+  ///                                                بطاقة واحدة للإحصائيات
   Widget _buildInfoCard({
     required String title,
-    required String value,
+    // required String value,
     required IconData icon,
     required Color color,
     required Size size,
@@ -663,21 +666,21 @@ class HomeView extends StatelessWidget {
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 6),
-            Text(
-              value,
-              style: TextStyle(
-                fontSize: size.width * 0.05,
-                color: Colors.black87,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
+            // Text(
+            //   value,
+            //   style: TextStyle(
+            //     fontSize: size.width * 0.05,
+            //     color: Colors.black87,
+            //     fontWeight: FontWeight.w600,
+            //   ),
+            // ),
           ],
         ),
       ),
     );
   }
 
-  /// ===== شيمر =====
+  ///                                                شيمر
   Widget _shimmerText({required double height, required double width}) {
     return Shimmer.fromColors(
       baseColor: Colors.white30,
@@ -693,7 +696,7 @@ class HomeView extends StatelessWidget {
     );
   }
 
-  /// ===== Grid Loading =====
+  ///                                                Grid Loading
   Widget _buildLoadingGrid(Size size) {
     return GridView.count(
       crossAxisCount: size.width > 600 ? 3 : 2,
@@ -730,7 +733,7 @@ class HomeView extends StatelessWidget {
     );
   }
 
-  /// ===== الإجراءات السريعة =====
+  ///                                                الإجراءات السريعة
   Widget _buildQuickActions(Size size) {
     return FadeInUp(
       duration: const Duration(milliseconds: 850),

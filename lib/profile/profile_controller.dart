@@ -32,7 +32,6 @@ class ProfileController extends GetxController {
     await fetchProfile();
   }
 
-  // -------- LOCAL AVATAR --------
   void setLocalAvatar(String path) {
     imagePath = path;
     box.write("local_avatar", path);

@@ -23,7 +23,6 @@ class LabTestController extends GetxController {
     "Content-Type": "application/json",
   };
 
-  // ------------------ جلب كل الفحوصات ------------------
   Future<void> fetchLabTests() async {
     try {
       isLoading = true;
@@ -64,7 +63,6 @@ class LabTestController extends GetxController {
     }
   }
 
-  // ------------------ جلب فحص واحد ------------------
   Future<void> fetchLabTestById(int id) async {
     try {
       isLoading = true;
@@ -87,7 +85,6 @@ class LabTestController extends GetxController {
     }
   }
 
-  // ------------------ إنشاء فحص ------------------
   Future<bool> createLabTest({
     required int patientId,
     required int orderedByDoctorId,
@@ -135,7 +132,6 @@ class LabTestController extends GetxController {
     }
   }
 
-  // ------------------ تحديث حالة الفحص ------------------
   Future<bool> updateLabTestStatus(int id, String status) async {
     try {
       BotToast.showLoading();
@@ -174,7 +170,6 @@ class LabTestController extends GetxController {
     }
   }
 
-  // ------------------ حذف فحص ------------------
   Future<bool> deleteLabTest(int id) async {
     try {
       BotToast.showLoading();
@@ -205,7 +200,6 @@ class LabTestController extends GetxController {
     }
   }
 
-  // ------------------ إضافة نتيجة ------------------
   Future<bool> addLabResult({
     required int labTestId,
     required String resultDate,
@@ -253,7 +247,6 @@ class LabTestController extends GetxController {
     }
   }
 
-  // ------------------ الفلترة ------------------
   void _applyFilter() {
     if (filteredPatientId != null) {
       labTests =
@@ -282,12 +275,10 @@ class LabTestController extends GetxController {
     }
   }
 
-  // ------------------ دورة الحياة ------------------
 
   @override
   void onInit() {
     super.onInit();
-    // مهم: لا نفعل أي تحديث هنا
   }
 
   @override

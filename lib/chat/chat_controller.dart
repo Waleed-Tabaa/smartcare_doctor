@@ -100,7 +100,6 @@ class ChatController extends GetxController {
       }''';
       final data2 = jsonDecode(responseMap);
       messages.add(ChatMessage.fromJson(data2['data']));
-      // messages.add(ChatMessage.fromJson(data['data']));
       update();
     }
   }

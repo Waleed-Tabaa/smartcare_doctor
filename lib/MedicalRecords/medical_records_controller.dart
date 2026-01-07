@@ -17,7 +17,6 @@ class MedicalRecordsController extends GetxController {
 
   String get _token => box.read("token") ?? "";
 
-  /// ===== Fetch all records =====
   Future<void> fetchRecords(int patientId) async {
     try {
       loading = true;
@@ -49,7 +48,6 @@ class MedicalRecordsController extends GetxController {
     update();
   }
 
-  /// ===== Add new record =====
   Future<bool> addRecord({
     required int patientId,
     required String visitDate,
@@ -98,7 +96,6 @@ class MedicalRecordsController extends GetxController {
     }
   }
 
-  /// ===== Delete record =====
   Future<void> deleteRecord(int id, int patientId) async {
     try {
       final response = await http.delete(

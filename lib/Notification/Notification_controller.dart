@@ -72,9 +72,7 @@ class NotificationsController extends GetxController {
 
       String token = rawToken.toString();
       log(token.toString(), name: "fetchNotifications token");
-      // if (token.startsWith("Bearer ")) {
-      //   token = token.substring(7);
-      // }
+
 
       final response = await http.get(
         Uri.parse("${ApiConfig.baseUrl}/api/notifications"),
@@ -150,7 +148,6 @@ class NotificationsController extends GetxController {
   List<Datum> get filteredNotifications {
     List<Datum> list = List.from(notificationModel.data);
 
-    // فلترنا الاشعارات
     if (selectedFilter == "جديدة") {
       list = list.where((n) => n.isRead == 0).toList();
     } else if (selectedFilter == "مقروءة") {
@@ -171,7 +168,6 @@ class NotificationsController extends GetxController {
     return list;
   }
 
-  // تعليم إشعار كمقروء
   void markAsRead(int id) {
     final idx = notificationModel.data.indexWhere((n) => n.id == id);
     if (idx != -1 && notificationModel.data[idx].isRead == 0) {

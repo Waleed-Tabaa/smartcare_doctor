@@ -293,7 +293,7 @@ class ProfileView extends StatelessWidget {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        backgroundColor: Colors.white, // Clean white background
+        backgroundColor: Colors.white,
         body: GetBuilder<ProfileController>(
           builder: (c) {
             if (c.isLoading) {
@@ -309,7 +309,6 @@ class ProfileView extends StatelessWidget {
 
             return CustomScrollView(
               slivers: [
-                // 1. Modern Collapsible Header
                 SliverAppBar(
                   expandedHeight: 220.0,
                   floating: false,
@@ -322,7 +321,6 @@ class ProfileView extends StatelessWidget {
                     background: Stack(
                       fit: StackFit.expand,
                       children: [
-                        // Background Gradient
                         Container(
                           decoration: const BoxDecoration(
                             gradient: LinearGradient(
@@ -332,7 +330,6 @@ class ProfileView extends StatelessWidget {
                             ),
                           ),
                         ),
-                        // Profile Info in Header
                         Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -386,7 +383,6 @@ class ProfileView extends StatelessWidget {
                   ],
                 ),
 
-                // 2. Profile Content
                 SliverToBoxAdapter(
                   child: Transform.translate(
                     offset: const Offset(0, -20),
@@ -401,7 +397,6 @@ class ProfileView extends StatelessWidget {
                       padding: const EdgeInsets.fromLTRB(20, 30, 20, 20),
                       child: Column(
                         children: [
-                          // --- Section 1: General ---
                           _buildModernSection(
                             title: "المعلومات العامة",
                             icon: Icons.person_pin,
@@ -426,7 +421,6 @@ class ProfileView extends StatelessWidget {
 
                           const SizedBox(height: 20),
 
-                          // --- Section 2: Clinic ---
                           _buildModernSection(
                             title: "معلومات العيادة",
                             icon: Icons.storefront,
@@ -452,7 +446,6 @@ class ProfileView extends StatelessWidget {
 
                           const SizedBox(height: 20),
 
-                          // --- Section 3: Schedule ---
                           _buildModernSection(
                             title: "الدوام",
                             icon: Icons.history_toggle_off,

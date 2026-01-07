@@ -83,7 +83,6 @@ class _NotificationsPageState extends State<NotificationsPage>
             backgroundColor: const Color(0xFFF6F8FB),
             body: Stack(
               children: [
-                // خلفية الموج (علوي + سفلي خفيف)
                 const _AnimatedWavesBackground(),
                 controller.isLoading
                     ? Container()
@@ -290,7 +289,6 @@ class _NotificationsPageState extends State<NotificationsPage>
 
                             const SizedBox(height: 14),
 
-                            // فلترة حسب  (جميع - جديدة - مقروءة)
                             Row(
                               children:
                                   controller.filters.map((f) {
@@ -570,7 +568,6 @@ class _NotificationsPageState extends State<NotificationsPage>
                                                         CrossAxisAlignment
                                                             .start,
                                                     children: [
-                                                      // أيقونة حسب  نوع الاشعار
                                                       Container(
                                                         width: 52,
                                                         height: 52,
@@ -606,7 +603,6 @@ class _NotificationsPageState extends State<NotificationsPage>
 
                                                       const SizedBox(width: 12),
 
-                                                      // محتوى الإشعار
                                                       Expanded(
                                                         child: Column(
                                                           crossAxisAlignment:
@@ -631,7 +627,6 @@ class _NotificationsPageState extends State<NotificationsPage>
                                                                     ),
                                                                   ),
                                                                 ),
-                                                                // تاج الحالة (مثل: مهم)
                                                                 Container(
                                                                   margin:
                                                                       const EdgeInsets.only(
@@ -830,7 +825,6 @@ class _NotificationsPageState extends State<NotificationsPage>
   }
 }
 
-/// خلفية الموج المتحركة (علوي + سفلي خفيف)
 class _AnimatedWavesBackground extends StatefulWidget {
   const _AnimatedWavesBackground();
 
@@ -847,7 +841,7 @@ class _AnimatedWavesBackgroundState extends State<_AnimatedWavesBackground>
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 4), // أسرع شوي
+      duration: const Duration(seconds: 4), 
     )..repeat(reverse: true);
   }
 
@@ -864,12 +858,10 @@ class _AnimatedWavesBackgroundState extends State<_AnimatedWavesBackground>
       builder: (context, _) {
         return Stack(
           children: [
-            // أعلى
             CustomPaint(
               size: Size(MediaQuery.of(context).size.width, 180),
               painter: _WavePainter(_controller.value, isTop: true),
             ),
-            // أسفل خفيف
             Align(
               alignment: Alignment.bottomCenter,
               child: CustomPaint(

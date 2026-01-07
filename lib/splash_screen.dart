@@ -20,23 +20,16 @@ class SplashScreen extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.all(20.0),
                   child: Image.asset(
-                    "assets/images/14c26c09-c455-4327-87db-e93d0b497601.png", // عدل المسار حسب مشروعك
+                    "assets/images/14c26c09-c455-4327-87db-e93d0b497601.png", 
                     width: 180,
                     height: 180,
                     fit: BoxFit.contain,
                   ),
                 ),
 
-                const SizedBox(height: 10),
+              
 
-                const Text(
-                  "SmartCare",
-                  style: TextStyle(
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF1A73E8),
-                  ),
-                ),
+               
 
                 const SizedBox(height: 6),
 

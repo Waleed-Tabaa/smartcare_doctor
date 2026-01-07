@@ -152,10 +152,8 @@ class _AddLabTestPageState extends State<AddLabTestPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // اختيار المريض
                   GetBuilder<PatientsController>(
                     builder: (patientsController) {
-                      // التحقق من وجود البيانات
                       if (patientsController.patientModel.patients.isEmpty) {
                         return Container(
                           padding: const EdgeInsets.all(16),
@@ -210,7 +208,6 @@ class _AddLabTestPageState extends State<AddLabTestPage> {
                   ),
                   const SizedBox(height: 16),
 
-                  // نوع الفحص
                   TextFormField(
                     controller: _testTypeController,
                     decoration: InputDecoration(
@@ -232,7 +229,6 @@ class _AddLabTestPageState extends State<AddLabTestPage> {
                   ),
                   const SizedBox(height: 16),
 
-                  // اسم المختبر
                   TextFormField(
                     controller: _labNameController,
                     decoration: InputDecoration(
@@ -254,7 +250,6 @@ class _AddLabTestPageState extends State<AddLabTestPage> {
                   ),
                   const SizedBox(height: 16),
 
-                  // تاريخ الاستحقاق
                   InkWell(
                     onTap: _selectDueDate,
                     child: Container(
@@ -289,7 +284,6 @@ class _AddLabTestPageState extends State<AddLabTestPage> {
                   ),
                   const SizedBox(height: 32),
 
-                  // زر الإرسال
                   SizedBox(
                     width: double.infinity,
                     height: 50,

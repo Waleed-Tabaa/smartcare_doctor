@@ -14,10 +14,7 @@ class ChatMessage {
   });
 
   factory ChatMessage.fromJson(Map<String, dynamic> json) {
-    // final encryptedBody = json['body'];
-
-    // final text =
-    //     encryptedBody is String ? ChatCrypto.decryptMessage(encryptedBody) : '';
+    
 
     return ChatMessage(
       id: json['id'],
