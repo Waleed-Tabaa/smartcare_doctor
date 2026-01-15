@@ -26,7 +26,7 @@ class LoginDoctorPage extends StatelessWidget {
                         child: Column(
                           children: [
                             Image.asset(
-                              'assets/images/photo_2025-04-16_14-38-02-removebg-preview.png',
+                              'assets/images/14c26c09-c455-4327-87db-e93d0b497601.png',
                               height: 120,
                             ),
                             const SizedBox(height: 16),

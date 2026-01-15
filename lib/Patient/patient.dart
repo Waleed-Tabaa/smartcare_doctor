@@ -136,34 +136,34 @@ class _PatientsPageState extends State<PatientsPage>
                                             ],
                                           ),
 
-                                          ElevatedButton.icon(
-                                            onPressed: () {
-                                              Get.toNamed("AddPatientView");
-                                            },
-                                            icon: const Icon(
-                                              Icons.add,
-                                              color: Colors.white,
-                                            ),
-                                            label: const Text(
-                                              "إضافة مريض",
-                                              style: TextStyle(
-                                                color: Colors.white,
-                                              ),
-                                            ),
-                                            style: ElevatedButton.styleFrom(
-                                              backgroundColor:
-                                                  Colors.blueAccent,
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                    horizontal: 12,
-                                                    vertical: 8,
-                                                  ),
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(10),
-                                              ),
-                                            ),
-                                          ),
+                                          // ElevatedButton.icon(
+                                          //   onPressed: () {
+                                          //     Get.toNamed("AddPatientView");
+                                          //   },
+                                          //   icon: const Icon(
+                                          //     Icons.add,
+                                          //     color: Colors.white,
+                                          //   ),
+                                          //   label: const Text(
+                                          //     "إضافة مريض",
+                                          //     style: TextStyle(
+                                          //       color: Colors.white,
+                                          //     ),
+                                          //   ),
+                                          //   style: ElevatedButton.styleFrom(
+                                          //     backgroundColor:
+                                          //         Colors.blueAccent,
+                                          //     padding:
+                                          //         const EdgeInsets.symmetric(
+                                          //           horizontal: 12,
+                                          //           vertical: 8,
+                                          //         ),
+                                          //     shape: RoundedRectangleBorder(
+                                          //       borderRadius:
+                                          //           BorderRadius.circular(10),
+                                          //     ),
+                                          //   ),
+                                          // ),
                                         ],
                                       ),
 
